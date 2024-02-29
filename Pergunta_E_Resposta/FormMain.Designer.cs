@@ -79,7 +79,7 @@
             txtPegarTopico.Name = "txtPegarTopico";
             txtPegarTopico.Size = new Size(169, 23);
             txtPegarTopico.TabIndex = 3;
-            txtPegarTopico.TextChanged += txtPegarTopico_TextChanged;
+
             // 
             // lbeNome
             // 
@@ -89,7 +89,7 @@
             lbeNome.Size = new Size(136, 15);
             lbeNome.TabIndex = 4;
             lbeNome.Text = "Digite o nome do topico";
-            lbeNome.Click += label1_Click;
+           
             // 
             // Deletar
             // 
