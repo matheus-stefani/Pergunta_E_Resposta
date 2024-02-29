@@ -18,46 +18,50 @@ namespace Pergunta_E_Resposta
         public FormMain()
         {
             InitializeComponent();
-            MetodosSQLTopicos.PegarTodasAsTabelas(ref dgvMain);
-            
+            MetodosSQLTopicos.PegarTodasAsTabelas(ref dgvMain, ref txtBusca);
+
         }
 
         private void btnTopico_Click(object sender, EventArgs e)
         {
-            if(btnTopico.Text == Constantes.CriarSubTopico)
+            if (btnTopico.Text == Constantes.CriarSubTopico)
             {
                 MessageBox.Show("subTopico criado com sucesso");
                 return;
             }
-            if(btnTopico.Text == Constantes.EditarTopico)
+            if (btnTopico.Text == Constantes.EditarTopico)
             {
-                var a = MessageBox.Show($"Tem certeza que deseja mudar o nome de {TopicosNomes[PegarIdEditar].Topico} para {txtPegarTopico.Text}", "Editar certeza?",MessageBoxButtons.YesNo,MessageBoxIcon.Information);
+                var a = MessageBox.Show($"Tem certeza que deseja mudar o nome de {TopicosNomes[PegarIdEditar].Topico} para {"Tb" + MetodosSQLTopicos.PegarIdString(TopicosNomes[PegarIdEditar].Topico) + "_" + txtPegarTopico.Text}", "Editar certeza?", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
                 if (a == DialogResult.No)
                 {
                     PegarIdEditar = -1;
                     AlteraLabelAndBotao(Constantes.Digite_o_NomeDoTopico, Constantes.CriarTopico);
                     txtPegarTopico.Text = "";
+                    lblEditar.Text = "";
                     return;
                 }
-                MetodosSQLTopicos.EditarNomeTopico(PegarIdEditar,ref txtPegarTopico);
+                MetodosSQLTopicos.EditarNomeTopico(PegarIdEditar, ref txtPegarTopico);
                 PegarIdEditar = -1;
                 AlteraLabelAndBotao(Constantes.Digite_o_NomeDoTopico, Constantes.CriarTopico);
-              
+                MetodosSQLTopicos.PegarTodasAsTabelas(ref dgvMain, ref txtBusca);
+                lblEditar.Text = "";
+                return;
 
             }
             PegarTopico = txtPegarTopico.Text;
             MetodosSQLTopicos.CriarDBMaisTabela();
-            MetodosSQLTopicos.PegarTodasAsTabelas(ref dgvMain);
-            
+            MetodosSQLTopicos.PegarTodasAsTabelas(ref dgvMain, ref txtBusca);
+
             PegarTopico = string.Empty;
             txtPegarTopico.Text = string.Empty;
 
 
         }
-       
+
 
         private void dgvMain_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
+            lblEditar.Text = "";
             if (e.ColumnIndex == 0)
             {
 
@@ -65,50 +69,74 @@ namespace Pergunta_E_Resposta
                     , "Tem Certeza?", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.Yes)
                 {
                     MetodosSQLTopicos.DeletarTopico(e.RowIndex);
-                    MetodosSQLTopicos.PegarTodasAsTabelas(ref dgvMain);
-                    
-                }
-        
+                    MetodosSQLTopicos.PegarTodasAsTabelas(ref dgvMain, ref txtBusca);
 
-    }
-            if(e.ColumnIndex == 1)
+                }
+
+
+            }
+            if (e.ColumnIndex == 1)
             {
-                if(lbeNome.Text == Constantes.Digite_o_NomeDoTopico)
+               
+                if (lbeNome.Text == Constantes.Digite_o_NomeDoTopico || lbeNome.Text == Constantes.Digite_o_NovoNomeDoTopico)
                 {
                     AlteraLabelAndBotao(Constantes.Digite_o_NovoNomeDoTopico, Constantes.EditarTopico);
                     PegarIdEditar = e.RowIndex;
+                    lblEditar.Text = TopicosNomes[PegarIdEditar].Topico;
                 }
             }
-            if(e.ColumnIndex == 2)
+            if (e.ColumnIndex == 2)
             {
-                if (lbeNome.Text == Constantes.Digite_o_Nome_DoSubTopico) 
+                if (lbeNome.Text == Constantes.Digite_o_Nome_DoSubTopico)
                 {
                     MessageBox.Show("Entrou em subtopico");
                 }
             }
-            if(e.ColumnIndex == 3) {
+            if (e.ColumnIndex == 3)
+            {
                 AlteraLabelAndBotao(Constantes.Digite_o_NomeDoTopico, Constantes.CriarTopico);
             }
-            if(e.ColumnIndex == 4)
+            if (e.ColumnIndex == 4)
             {
                 AlteraLabelAndBotao(Constantes.Digite_o_Nome_DoSubTopico, Constantes.CriarSubTopico);
             }
+            
         }
-        
-        private void AlteraLabelAndBotao(string lbe,string btn)
+
+        private void AlteraLabelAndBotao(string lbe, string btn)
         {
             lbeNome.Text = lbe;
             btnTopico.Text = btn;
         }
-       
+
         private void btnExibir_Click(object sender, EventArgs e)
         {
-            
-            MetodosSQLTopicos.PegarTodasAsTabelas(ref dgvMain);
-            
+
+            MetodosSQLTopicos.PegarTodasAsTabelas(ref dgvMain, ref txtBusca);
+
         }
 
-        
+        private void btnClear_Click(object sender, EventArgs e)
+        {
+            txtPegarTopico.Text = "";
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            MetodosSQLTopicos.PegarTodasAsTabelas(ref dgvMain, ref txtBusca);
+        }
+
+        private void btnClear2_Click(object sender, EventArgs e)
+        {
+            txtBusca.Text = "";
+        }
+
+        private void FormMain_Load(object sender, EventArgs e)
+        {
+
+        }
+
+
 
 
         ////////////////
