@@ -31,21 +31,29 @@ namespace Pergunta_E_Resposta
             }
             if (btnTopico.Text == Constantes.EditarTopico)
             {
-                var a = MessageBox.Show($"Tem certeza que deseja mudar o nome de {TopicosNomes[PegarIdEditar].Topico} para {"Tb" + MetodosSQLTopicos.PegarIdString(TopicosNomes[PegarIdEditar].Topico) + "_" + txtPegarTopico.Text}", "Editar certeza?", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+               
+                try
+                {
+                    var a = MessageBox.Show($"Tem certeza que deseja mudar o nome de {TopicosNomes[PegarIdEditar].Topico} para {"Tb" + MetodosSQLTopicos.PegarIdString(TopicosNomes[PegarIdEditar].Topico) + "_" + txtPegarTopico.Text}", "Editar certeza?", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
                 if (a == DialogResult.No)
                 {
                     PegarIdEditar = -1;
                     AlteraLabelAndBotao(Constantes.Digite_o_NomeDoTopico, Constantes.CriarTopico);
                     txtPegarTopico.Text = "";
-                    lblEditar.Text = "";
+                    
                     return;
                 }
                 MetodosSQLTopicos.EditarNomeTopico(PegarIdEditar, ref txtPegarTopico);
                 PegarIdEditar = -1;
                 AlteraLabelAndBotao(Constantes.Digite_o_NomeDoTopico, Constantes.CriarTopico);
                 MetodosSQLTopicos.PegarTodasAsTabelas(ref dgvMain, ref txtBusca);
-                lblEditar.Text = "";
+                
                 return;
+                }
+                catch
+                {
+                    MessageBox.Show("Erro ao editar possivelmente tabela vazia");
+                }
 
             }
             PegarTopico = txtPegarTopico.Text;
@@ -69,6 +77,7 @@ namespace Pergunta_E_Resposta
                     , "Tem Certeza?", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.Yes)
                 {
                     MetodosSQLTopicos.DeletarTopico(e.RowIndex);
+                    AlteraLabelAndBotao(Constantes.Digite_o_NomeDoTopico, Constantes.CriarTopico);
                     MetodosSQLTopicos.PegarTodasAsTabelas(ref dgvMain, ref txtBusca);
 
                 }
@@ -103,10 +112,11 @@ namespace Pergunta_E_Resposta
             
         }
 
-        private void AlteraLabelAndBotao(string lbe, string btn)
+        private void AlteraLabelAndBotao(string lbe, string btn, string lbeE = "")
         {
             lbeNome.Text = lbe;
             btnTopico.Text = btn;
+            lblEditar.Text = lbeE;
         }
 
         private void btnExibir_Click(object sender, EventArgs e)
