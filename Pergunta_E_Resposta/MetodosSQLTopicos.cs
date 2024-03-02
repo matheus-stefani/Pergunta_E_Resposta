@@ -86,7 +86,7 @@ namespace Pergunta_E_Resposta
             {
                 conn.Open();
                 StringBuilder query = new StringBuilder();
-                query.Append($"SELECT name FROM sqlite_master WHERE  name like \"%{txtBusca.Text}%\" ");
+                query.Append($"SELECT name FROM sqlite_master WHERE  name like \"%{txtBusca.Text}%\" AND name like \"Tb%\" ");
                 SqliteCommand cmd = new SqliteCommand(query.ToString(), conn);
                 var a = cmd.ExecuteReader();
                 FormMain.TopicosNomes = new List<Topicos>();
@@ -113,6 +113,7 @@ namespace Pergunta_E_Resposta
                 cmd.ExecuteNonQuery();
             }
         }
+        /*
         public static void BuscarNoBancoTopico(ref TextBox txtPegarTopico)
         {
             using (SqliteConnection conn = new SqliteConnection($"Filename={FormMain.caminho_para_DB}"))
@@ -128,6 +129,7 @@ namespace Pergunta_E_Resposta
                 }
             }
         }
+        */
         ///////////////////
     }
 }

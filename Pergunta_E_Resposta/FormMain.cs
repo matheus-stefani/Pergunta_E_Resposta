@@ -13,8 +13,10 @@ namespace Pergunta_E_Resposta
     {
         public static string caminho_para_DB = Path.Combine(Application.LocalUserAppDataPath, "Topicos.db");
         public static List<Topicos> TopicosNomes = new List<Topicos>();
+        public static List<Topicos> SubTopicosNomes = new List<Topicos>();
         public static string PegarTopico = string.Empty;
         public static int PegarIdEditar = -1;
+        int idDoTopicoAtual = -1;
         public FormMain()
         {
             InitializeComponent();
@@ -26,7 +28,15 @@ namespace Pergunta_E_Resposta
         {
             if (btnTopico.Text == Constantes.CriarSubTopico)
             {
+                if (idDoTopicoAtual == -1)
+                {
+                    MessageBox.Show("Algo deu errado no subtopico botao tabela");
+                }
+                MetodosSQLSubTopico.CriarSubTabela(ref txtPegarTopico,idDoTopicoAtual);
+
+                MetodosSQLSubTopico.PegarTabelasSubTopico(ref dgvMain, ref txtBusca, idDoTopicoAtual);
                 MessageBox.Show("subTopico criado com sucesso");
+                
                 return;
             }
             if (btnTopico.Text == Constantes.EditarTopico)
@@ -43,6 +53,7 @@ namespace Pergunta_E_Resposta
                     
                     return;
                 }
+                    
                 MetodosSQLTopicos.EditarNomeTopico(PegarIdEditar, ref txtPegarTopico);
                 PegarIdEditar = -1;
                 AlteraLabelAndBotao(Constantes.Digite_o_NomeDoTopico, Constantes.CriarTopico);
@@ -104,10 +115,26 @@ namespace Pergunta_E_Resposta
             if (e.ColumnIndex == 3)
             {
                 AlteraLabelAndBotao(Constantes.Digite_o_NomeDoTopico, Constantes.CriarTopico);
+                MetodosSQLTopicos.PegarTodasAsTabelas(ref dgvMain, ref txtBusca);
+                idDoTopicoAtual = -1;
+                
             }
             if (e.ColumnIndex == 4)
             {
+                if(btnTopico.Text == Constantes.CriarSubTopico)
+                {
+                    MessageBox.Show("Voce ja esta em SubTopico!!!","SubTopico",MessageBoxButtons.OK,MessageBoxIcon.Information);
+                    return;
+                }
                 AlteraLabelAndBotao(Constantes.Digite_o_Nome_DoSubTopico, Constantes.CriarSubTopico);
+                idDoTopicoAtual = MetodosSQLTopicos.PegarIdString(TopicosNomes[e.RowIndex].Topico);
+                if(idDoTopicoAtual == -1)
+                {
+                    MessageBox.Show("Algo deu errado no subtopico botao tabela");
+                }
+                
+                MetodosSQLSubTopico.PegarTabelasSubTopico(ref dgvMain, ref txtBusca,idDoTopicoAtual);
+
             }
             
         }
