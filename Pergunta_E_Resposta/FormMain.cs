@@ -67,7 +67,9 @@ namespace Pergunta_E_Resposta
                 }
 
             }
+            
             PegarTopico = txtPegarTopico.Text;
+            
             MetodosSQLTopicos.CriarDBMaisTabela();
             MetodosSQLTopicos.PegarTodasAsTabelas(ref dgvMain, ref txtBusca);
 
@@ -83,7 +85,11 @@ namespace Pergunta_E_Resposta
             lblEditar.Text = "";
             if (e.ColumnIndex == 0)
             {
-
+                if(btnTopico.Text == Constantes.CriarSubTopico)
+                {
+                    
+                    return;
+                }
                 if (MessageBox.Show($"Tem certeza que quer deletar {TopicosNomes[e.RowIndex].Topico}"
                     , "Tem Certeza?", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.Yes)
                 {

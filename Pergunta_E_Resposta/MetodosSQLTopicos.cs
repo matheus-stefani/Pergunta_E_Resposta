@@ -26,7 +26,9 @@ namespace Pergunta_E_Resposta
 
         public static int PegarIdString(string stringPegarId)
         {
+            
             string b = "";
+            
             for(int i = 2; i < stringPegarId.Length; i++)
             {
                 if (stringPegarId[i] == '_') break;
@@ -34,6 +36,7 @@ namespace Pergunta_E_Resposta
                 b += stringPegarId[i];
             }
             return Convert.ToInt32(b);
+
         }
 
         
@@ -44,18 +47,21 @@ namespace Pergunta_E_Resposta
             {
                 conn.Open();
                 StringBuilder query = new StringBuilder();
-                query.Append("SELECT name FROM sqlite_master");
+                query.Append("SELECT name FROM sqlite_master WHERE name like \"Tb%\"");
                 SqliteCommand cmd = new SqliteCommand(query.ToString(), conn);
                 var a = cmd.ExecuteReader();
                 
                 int retorno = -1;
+                string topico = "";
                 while (a.Read())
                 {
-                    string topico = a["name"] as string;
-                    retorno = PegarIdString(topico);
+                    topico = a["name"] as string;
                     
                 }
-                return retorno == -1 ? 1 : retorno;
+
+                if(topico == "") return 0;
+                    
+                return PegarIdString(topico);
             }
         }
 
