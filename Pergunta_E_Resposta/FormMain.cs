@@ -14,6 +14,7 @@ namespace Pergunta_E_Resposta
         public static string caminho_para_DB = Path.Combine(Application.LocalUserAppDataPath, "Topicos.db");
         public static List<Topicos> TopicosNomes = new List<Topicos>();
         public static List<Topicos> SubTopicosNomes = new List<Topicos>();
+        public static List<Topicos> SubTopicosRelacionados= new List<Topicos>();
         public static string PegarTopico = string.Empty;
         public static int PegarIdEditar = -1;
         int idDoTopicoAtual = -1;
@@ -94,9 +95,14 @@ namespace Pergunta_E_Resposta
                     , "Tem Certeza?", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.Yes)
                 {
                     MetodosSQLTopicos.DeletarTopico(e.RowIndex);
+                    MetodosSQLTopicos.PegarSubTopicosRelacionados(e.RowIndex);
+                    for(int i = 0; i<SubTopicosRelacionados.Count;i++)
+                    {
+                        MetodosSQLTopicos.DeletarSubTopicosRelacionados(SubTopicosRelacionados[i].Topico);
+                    }
+                    SubTopicosRelacionados = new List<Topicos>();
                     AlteraLabelAndBotao(Constantes.Digite_o_NomeDoTopico, Constantes.CriarTopico);
                     MetodosSQLTopicos.PegarTodasAsTabelas(ref dgvMain, ref txtBusca);
-
                 }
 
 

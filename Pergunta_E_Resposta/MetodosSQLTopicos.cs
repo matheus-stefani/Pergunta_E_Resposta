@@ -18,13 +18,48 @@ namespace Pergunta_E_Resposta
                 StringBuilder query = new StringBuilder();
                 query.Append($"DROP TABLE IF EXISTS {FormMain.TopicosNomes[id].Topico}");
                 SqliteCommand cmd = new SqliteCommand(query.ToString(), conn);
+                cmd.ExecuteNonQuery();
+                
+            
+            }
+        }
 
+        public static void PegarSubTopicosRelacionados(int id)
+        {
+            using (SqliteConnection conn = new SqliteConnection($"Filename={FormMain.caminho_para_DB}"))
+            {
+                conn.Open();
+                StringBuilder query = new StringBuilder();
+                query.Append($"SELECT name FROM sqlite_master WHERE name like \"%%\" AND name like \"%SUB%\" AND name like \"%Tb{PegarIdString(FormMain.TopicosNomes[id].Topico)}%\"");
+                SqliteCommand cmd2 = new SqliteCommand(query.ToString(), conn);
+                var a = cmd2.ExecuteReader();
+                List<Topicos> pegarSubRelacionados = new List<Topicos>();
+               
+                while (a.Read())
+                {
+                    
+                   string nome = a["name"] as string;
+                    
+                    pegarSubRelacionados.Add(new Topicos(nome));
+                }
+                FormMain.SubTopicosRelacionados = pegarSubRelacionados;
+            }
+        }
+
+        public static void DeletarSubTopicosRelacionados(string subRelacionados)
+        {
+            using (SqliteConnection conn = new SqliteConnection($"Filename={FormMain.caminho_para_DB}"))
+            {
+                conn.Open();
+               
+                StringBuilder query = new StringBuilder();
+                query.Append($"DROP TABLE IF EXISTS {subRelacionados}");
+                SqliteCommand cmd = new SqliteCommand(query.ToString(), conn);
                 cmd.ExecuteNonQuery();
 
             }
         }
-
-        public static int PegarIdString(string stringPegarId)
+            public static int PegarIdString(string stringPegarId)
         {
             
             string b = "";
