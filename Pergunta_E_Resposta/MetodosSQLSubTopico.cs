@@ -10,7 +10,35 @@ namespace Pergunta_E_Resposta
 {
     internal class MetodosSQLSubTopico
     {
-       public static void PegarTabelasSubTopico(ref DataGridView oda, ref TextBox txtBusca, int idDoTopicoAtual)
+
+        public static void EditarNomeSubTopico(int id, ref TextBox txtPegarTopico)
+        {
+            using (SqliteConnection conn = new SqliteConnection($"Filename={FormMain.caminho_para_DB}"))
+            {
+                conn.Open();
+                StringBuilder query = new StringBuilder();
+                FormMain.PegarTopico = $"SUB{PegarIdStringEditar(FormMain.SubTopicosNomes[id].Topico)}_" + txtPegarTopico.Text.Replace(" ", "_");
+                query.Append($"ALTER TABLE {FormMain.SubTopicosNomes[id].Topico}  RENAME TO {FormMain.PegarTopico};");
+                SqliteCommand cmd = new SqliteCommand(query.ToString(), conn);
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+
+        public static void DeletarSubTopico(int id)
+        {
+            using (SqliteConnection conn = new SqliteConnection($"Filename={FormMain.caminho_para_DB}"))
+            {
+                conn.Open();
+                StringBuilder query = new StringBuilder();
+                query.Append($"DROP TABLE IF EXISTS {FormMain.SubTopicosNomes[id].Topico}");
+                SqliteCommand cmd = new SqliteCommand(query.ToString(), conn);
+                cmd.ExecuteNonQuery();
+
+
+            }
+        }
+        public static void PegarTabelasSubTopico(ref DataGridView oda, ref TextBox txtBusca, int idDoTopicoAtual)
         {
             using (SqliteConnection conn = new SqliteConnection($"Filename={FormMain.caminho_para_DB}"))
             {
@@ -20,16 +48,40 @@ namespace Pergunta_E_Resposta
                 SqliteCommand cmd = new SqliteCommand( query.ToString(), conn );
 
                 var a=cmd.ExecuteReader();
-                List<Topicos> list = new List<Topicos>();
+                FormMain.SubTopicosNomes = new List<Topicos>();
                 while (a.Read())
                 {
                     string nome = a["name"] as string;
-                    list.Add(new Topicos(nome));
+                    FormMain.SubTopicosNomes.Add(new Topicos(nome));
                 }
-                oda.DataSource = list;
+                oda.DataSource = null;
+                oda.DataSource = FormMain.SubTopicosNomes;
             }
 
             
+
+        }
+        public static string PegarIdStringEditar(string stringPegarId)
+        {
+
+            string b = "";
+            int cont = 0;
+            for (int i = 3; i < stringPegarId.Length; i++)
+            {
+                if (stringPegarId[i] == '_')
+                {
+                    cont++;
+                    if (cont == 2)
+                    {
+                    break;
+
+                    }
+
+                }
+
+                b += stringPegarId[i];
+            }
+            return b;
 
         }
         public static int PegarIdString(string stringPegarId)

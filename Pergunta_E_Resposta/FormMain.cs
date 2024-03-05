@@ -68,7 +68,39 @@ namespace Pergunta_E_Resposta
                 }
 
             }
-            
+
+            if (btnTopico.Text == Constantes.EditarSubTopico)
+            {
+
+                try
+                {
+                    var a = MessageBox.Show($"Tem certeza que deseja mudar o nome de {SubTopicosNomes[PegarIdEditar].Topico} para {"SUB" + MetodosSQLSubTopico.PegarIdStringEditar(SubTopicosNomes[PegarIdEditar].Topico) + "_" + txtPegarTopico.Text}", "Editar certeza?", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+                    if (a == DialogResult.No)
+                    {
+                        PegarIdEditar = -1;
+                        AlteraLabelAndBotao(Constantes.Digite_o_Nome_DoSubTopico, Constantes.CriarSubTopico);
+                        txtPegarTopico.Text = "";
+
+                        return;
+                    }
+
+                    MetodosSQLSubTopico.EditarNomeSubTopico(PegarIdEditar, ref txtPegarTopico);
+                    PegarIdEditar = -1;
+                    AlteraLabelAndBotao(Constantes.Digite_o_Nome_DoSubTopico, Constantes.CriarSubTopico);
+                    MetodosSQLSubTopico.PegarTabelasSubTopico(ref dgvMain, ref txtBusca, idDoTopicoAtual);
+
+                    return;
+                }
+                catch
+                {
+                    MessageBox.Show("Erro ao editar possivelmente tabela vazia");
+                }
+
+            }
+
+
+
+
             PegarTopico = txtPegarTopico.Text;
             
             MetodosSQLTopicos.CriarDBMaisTabela();
@@ -88,8 +120,19 @@ namespace Pergunta_E_Resposta
             {
                 if(btnTopico.Text == Constantes.CriarSubTopico)
                 {
+                    if (MessageBox.Show($"Tem certeza que quer deletar {SubTopicosNomes[e.RowIndex].Topico}"
+                    , "Tem Certeza?", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.Yes)
+                    {
+                      
+                    MetodosSQLSubTopico.DeletarSubTopico(e.RowIndex);
                     
+                    MetodosSQLSubTopico.PegarTabelasSubTopico(ref dgvMain, ref txtBusca, idDoTopicoAtual);
                     return;
+
+                    }
+                    return;
+
+
                 }
                 if (MessageBox.Show($"Tem certeza que quer deletar {TopicosNomes[e.RowIndex].Topico}"
                     , "Tem Certeza?", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.Yes)
@@ -109,6 +152,13 @@ namespace Pergunta_E_Resposta
             }
             if (e.ColumnIndex == 1)
             {
+
+                if(lbeNome.Text == Constantes.Digite_o_Nome_DoSubTopico)
+                {
+                    AlteraLabelAndBotao(Constantes.Digite_o_NovoNomeDoSubTopico, Constantes.EditarSubTopico);
+                    PegarIdEditar = e.RowIndex;
+                    lblEditar.Text = SubTopicosNomes[PegarIdEditar].Topico;
+                }
                
                 if (lbeNome.Text == Constantes.Digite_o_NomeDoTopico || lbeNome.Text == Constantes.Digite_o_NovoNomeDoTopico)
                 {
